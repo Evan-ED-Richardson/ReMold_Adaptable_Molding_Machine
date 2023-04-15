@@ -1,4 +1,4 @@
-package STL2GCODE.util;
+package STL2GCODE.stl4j;
 
 public final class Vec3d {
     /**

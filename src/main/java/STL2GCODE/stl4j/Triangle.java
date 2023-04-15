@@ -1,4 +1,4 @@
-package STL2GCODE.util;
+package STL2GCODE.stl4j;
 
 import java.util.Arrays;
 
@@ -33,6 +33,40 @@ public class Triangle {
             vertices[i] = vertices[i].add(translation);
         }
     }
+
+    /**
+     * Calculates the barycentric coordinates of a given point (x, y) with respect to this triangle.
+     * Barycentric coordinates (u, v, w) represent a point's position within a triangle as a weighted average
+     * of the triangle's vertices. If the point lies within the triangle, the method returns an array with
+     * three barycentric coordinates [u, v, w]. If the point is outside the triangle, the method returns null.
+     *
+     * @param x The x-coordinate of the point for which barycentric coordinates are to be calculated.
+     * @param y The y-coordinate of the point for which barycentric coordinates are to be calculated.
+     * @return An array with three barycentric coordinates [u, v, w] if the point is inside the triangle,
+     *         or null if the point is outside the triangle.
+     */
+    public double[] barycentricCoords(double x, double y) {
+        Vec3d v0 = vertices[1].sub(vertices[0]);
+        Vec3d v1 = vertices[2].sub(vertices[0]);
+        Vec3d v2 = new Vec3d(x - vertices[0].x, y - vertices[0].y, 0);
+
+        double dot00 = v0.dot(v0);
+        double dot01 = v0.dot(v1);
+        double dot02 = v0.dot(v2);
+        double dot11 = v1.dot(v1);
+        double dot12 = v1.dot(v2);
+
+        double invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+        double u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        double v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+        if (u >= 0 && v >= 0 && u + v <= 1) {
+            return new double[]{u, v, 1 - u - v};
+        } else {
+            return null;
+        }
+    }
+
     /**
      * @see java.lang.Object#toString()
      * @return A string that provides some information about this triangle
@@ -46,6 +80,7 @@ public class Triangle {
         sb.append("]");
         return sb.toString();
     }
+
     /**
      * Gets the vertices at the corners of this triangle
      * @return An array of vertices
@@ -53,6 +88,7 @@ public class Triangle {
     public Vec3d[] getVertices(){
         return vertices;
     }
+
     /**
      * Gets the normal vector
      * @return A vector pointing in a direction perpendicular to the surface of
@@ -82,6 +118,7 @@ public class Triangle {
         }
         return true;
     }
+
     /**
      * @see java.lang.Object#hashCode()
      * @return A hashCode for this triangle

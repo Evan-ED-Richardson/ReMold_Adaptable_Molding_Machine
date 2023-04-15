@@ -1,4 +1,4 @@
-package STL2GCODE.util;
+package STL2GCODE.stl4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
